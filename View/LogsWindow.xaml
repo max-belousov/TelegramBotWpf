@@ -1,0 +1,47 @@
+﻿<Window x:Class="TelegramBotWpfSB2.View.LogsWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        TextElement.Foreground="{DynamicResource MaterialDesignBody}"
+        TextElement.FontWeight="Regular"
+        TextElement.FontSize="13"
+        TextOptions.TextFormattingMode="Ideal" 
+        TextOptions.TextRenderingMode="Auto"        
+        Background="{DynamicResource MaterialDesignPaper}"
+        FontFamily="{DynamicResource MaterialDesignFont}"
+        mc:Ignorable="d"
+        Title="История сообщений" Height="750" Width="400" ResizeMode="NoResize" WindowStartupLocation="CenterScreen" ScrollViewer.VerticalScrollBarVisibility="Hidden" ScrollViewer.HorizontalScrollBarVisibility="Auto">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height = "15*"/>
+            <RowDefinition Height = "45*"/>
+        </Grid.RowDefinitions>
+        <Grid Grid.Row="1">
+            <ListView x:Name="logList">
+                <ListBox.ItemTemplate>
+                    <DataTemplate>
+                        <Border BorderBrush="Black" Margin="5" BorderThickness="1" CornerRadius="10" Width="340">
+                            <StackPanel Margin="10">
+                                <TextBlock Text="{Binding FirstName}" Margin="0" FontSize="15"/>
+                                <TextBlock Text="{Binding Msg}" Margin="0" FontSize="20"/>
+                                <TextBlock Text="{Binding Time}" Margin="10 0" FontSize="10" Foreground="Gray" TextAlignment="Right"/>
+                            </StackPanel>
+                        </Border>
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListView>
+        </Grid>
+        <Grid Grid.Row="0">
+            <Grid>
+                <TextBlock Text="История сообщений"
+                           VerticalAlignment="Center"
+                           Height="40"
+                           FontSize="28"
+                           FontWeight="Normal"
+                           Margin="10,0,10,0" 
+                           HorizontalAlignment="Stretch" TextAlignment="Center"/>
+            </Grid>
+        </Grid>
+    </Grid>
+</Window>

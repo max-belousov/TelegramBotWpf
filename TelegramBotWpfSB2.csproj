@@ -1,0 +1,33 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net6.0-windows</TargetFramework>
+    <Nullable>enable</Nullable>
+    <UseWPF>true</UseWPF>
+    <ApplicationIcon>iconTg2.ico</ApplicationIcon>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="View\iconTg.ico" />
+    <None Remove="View\iconTg.png" />
+    <None Remove="View\iconTg2.ico" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="iconTg2.ico" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="MaterialDesignThemes" Version="4.5.0" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+    <PackageReference Include="Telegram.Bot" Version="18.0.0" />
+    <PackageReference Include="Telegram.Bot.Extensions.Polling" Version="1.0.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="View\iconTg.ico" />
+    <Resource Include="View\iconTg2.ico" />
+  </ItemGroup>
+
+</Project>
