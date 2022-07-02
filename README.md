@@ -1,1 +1,1 @@
-# TelegramBotWpfSB2
+# TelegramBotWpf
