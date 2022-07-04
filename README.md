@@ -17,4 +17,5 @@
  - Weather API
  - Material Design
    
-   
+  You can run this project locally just do:
+  - 
