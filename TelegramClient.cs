@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Data;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -28,7 +29,8 @@ namespace TelegramBotWpfSB2
         private readonly MainWindow _mainWindow;
 
         private readonly TelegramBotClient _bot;
-        //private readonly LogsWindow _logsWindow;
+
+        private readonly string pathToDirectory = @"C:\Users\delicia\Desktop\DownloadTelegramBot\";
 
         public TelegramClient(MainWindow mainWindow, string pathToken = @"C:\Users\delicia\Desktop\C#\token_telegram\token.txt")
         {
@@ -66,7 +68,7 @@ namespace TelegramBotWpfSB2
                     chatId = update.Message.Chat.Id;
                     break;
             }
-            var dictionaryTypes = LoadDictionary(@"C:\Users\delicia\Desktop\DownloadTelegramBot\AllFilesDictionary.txt");
+            var dictionaryTypes = LoadDictionary(pathToDirectory + @"AllFilesDictionary.txt");
 
             if (update.Type == UpdateType.Message)
             {
@@ -374,39 +376,40 @@ namespace TelegramBotWpfSB2
                 if (update.Message!.Type != MessageType.Text)
                 {
                     var type = update.Message!.Type.ToString();
-                    var pathFileName = @"C:\Users\delicia\Desktop\DownloadTelegramBot\";
-                    var pathToDictionary = @"C:\Users\delicia\Desktop\DownloadTelegramBot\";
                     var now = DateTime.Now;
+                    long? fileSize;
                     string messageText = null;
                     string fileId = null;
                     string fileName = null;
+                    string? pathFileName = null;
                     switch (type)
                     {
                         case "Voice":
                             messageText = "О, голосовушка! Сохраним";
                             fileName = "Voice_" + now.ToString("dd_MM_yyyy_HH_mm_ss");
-                            pathFileName += $@"{type}\" + fileName + ".mp3";
+                            pathFileName = pathToDirectory +  $@"{type}\" + fileName + ".mp3";
                             fileId = update.Message.Voice.FileId;
+                            fileSize = update.Message.Voice.FileSize;
                             Console.WriteLine($"Received a voice message in chat {chatId}.");
                             break;
                         case "VideoNote":
                             messageText = "О, круглая видюшка! Сохраним";
                             fileName = "VideoNote_" + now.ToString("dd_MM_yyyy_HH_mm_ss");
-                            pathFileName += $@"{type}\" + fileName + ".mp4";
+                            pathFileName = pathToDirectory + $@"{type}\" + fileName + ".mp4";
                             fileId = update.Message.VideoNote.FileId;
                             Console.WriteLine($"Received a videonote message in chat {chatId}.");
                             break;
                         case "Video":
                             messageText = "О, видюшка! Сохраним";
                             fileName = "Video_" + now.ToString("dd_MM_yyyy_HH_mm_ss");
-                            pathFileName += $@"{type}\" + fileName + ".mp4";
+                            pathFileName = pathToDirectory + $@"{type}\" + fileName + ".mp4";
                             fileId = update.Message.Video.FileId;
                             Console.WriteLine($"Received a video message in chat {chatId}.");
                             break;
                         case "Photo":
                             messageText = "О, фоточка! Сохраним";
                             fileName = "Photo_" + now.ToString("dd_MM_yyyy_HH_mm_ss");
-                            pathFileName += $@"{type}\" + fileName + ".jpg";
+                            pathFileName = pathToDirectory + $@"{type}\" + fileName + ".jpg";
                             fileId = update.Message.Photo[1].FileId;
                             Console.WriteLine($"Received a photo message in chat {chatId}.");
                             break;
@@ -414,26 +417,25 @@ namespace TelegramBotWpfSB2
                             messageText = "О, файлик! Сохраним";
                             string[] findFormat = update.Message.Document.FileName.Split('.');
                             fileName = "Document_" + now.ToString("dd_MM_yyyy_HH_mm_ss");
-                            pathFileName += $@"{type}\{fileName}.{findFormat.Last()}";
+                            pathFileName = pathToDirectory + $@"{type}\{fileName}.{findFormat.Last()}";
                             fileId = update.Message.Document.FileId;
                             Console.WriteLine($"Received a document message in chat {chatId}.");
                             break;
                         case "Audio":
                             messageText = "О, музычка! Сохраним";
                             fileName = "Audio_" + now.ToString("dd_MM_yyyy_HH_mm_ss");
-                            pathFileName += $@"{type}\" + fileName + ".mp3";
+                            pathFileName = pathToDirectory + $@"{type}\" + fileName + ".mp3";
                             fileId = update.Message.Audio.FileId;
                             Console.WriteLine($"Received an audio message in chat {chatId}.");
                             break;
                     }
 
-                    if (AddToDictionary(LoadDictionary(pathToDictionary + "AllFilesDictionary.txt"), fileName, type, (pathToDictionary + "AllFilesDictionary.txt")))
+                    if (AddToDictionary(LoadDictionary(pathToDirectory + "AllFilesDictionary.txt"), fileName, type, (pathToDirectory + "AllFilesDictionary.txt")))
                     {
-                        if (AddToDictionary(LoadDictionary(pathToDictionary + @$"{type}\FilesDictionary.txt"), fileName, fileId, (pathToDictionary + @$"{type}\FilesDictionary.txt")))
+                        if (AddToDictionary(LoadDictionary(pathToDirectory + @$"{type}\FilesDictionary.txt"), fileName, fileId, (pathToDirectory + @$"{type}\FilesDictionary.txt")))
                         {
                             var file = await iBotClient.GetFileAsync(fileId);
                             var fs = new FileStream(pathFileName, FileMode.Create);
-                            Console.WriteLine("filePath: " + file.FilePath);
                             await iBotClient.DownloadFileAsync(file.FilePath, fs);
                             fs.Close();
 
@@ -456,8 +458,6 @@ namespace TelegramBotWpfSB2
             }
             else if (update.Type == UpdateType.CallbackQuery)
             {
-                Console.WriteLine(update.Type);
-                Console.WriteLine(update.CallbackQuery.Data);
                 var sentMessage = await iBotClient.SendTextMessageAsync(
                         chatId: chatId,
                         text: "Загружаем",
@@ -469,7 +469,7 @@ namespace TelegramBotWpfSB2
                 switch (typeKey)
                 {
                     case "Photo":
-                        dictionaryFiles = LoadDictionary(@$"C:\Users\delicia\Desktop\DownloadTelegramBot\{typeKey}\FilesDictionary.txt");
+                        dictionaryFiles = LoadDictionary(pathToDirectory+ @$"{typeKey}\FilesDictionary.txt");
                         inputOnlineFile = new InputOnlineFile(dictionaryFiles.GetValueOrDefault(update.CallbackQuery.Data));
                         await iBotClient.SendPhotoAsync(chatId, inputOnlineFile);
                         await iBotClient.SendTextMessageAsync(
@@ -478,7 +478,7 @@ namespace TelegramBotWpfSB2
                             cancellationToken: cancellationToken);
                         break;
                     case "Video":
-                        dictionaryFiles = LoadDictionary(@$"C:\Users\delicia\Desktop\DownloadTelegramBot\{typeKey}\FilesDictionary.txt");
+                        dictionaryFiles = LoadDictionary(pathToDirectory + @$"{typeKey}\FilesDictionary.txt");
                         inputOnlineFile = new InputOnlineFile(dictionaryFiles.GetValueOrDefault(update.CallbackQuery.Data));
                         await iBotClient.SendVideoAsync(chatId, inputOnlineFile);
                         await iBotClient.SendTextMessageAsync(
@@ -487,7 +487,7 @@ namespace TelegramBotWpfSB2
                             cancellationToken: cancellationToken);
                         break;
                     case "Audio":
-                        dictionaryFiles = LoadDictionary(@$"C:\Users\delicia\Desktop\DownloadTelegramBot\{typeKey}\FilesDictionary.txt");
+                        dictionaryFiles = LoadDictionary(pathToDirectory + @$"{typeKey}\FilesDictionary.txt");
                         inputOnlineFile = new InputOnlineFile(dictionaryFiles.GetValueOrDefault(update.CallbackQuery.Data));
                         await iBotClient.SendAudioAsync(chatId, inputOnlineFile);
                         await iBotClient.SendTextMessageAsync(
@@ -496,7 +496,7 @@ namespace TelegramBotWpfSB2
                             cancellationToken: cancellationToken);
                         break;
                     case "Document":
-                        dictionaryFiles = LoadDictionary(@$"C:\Users\delicia\Desktop\DownloadTelegramBot\{typeKey}\FilesDictionary.txt");
+                        dictionaryFiles = LoadDictionary(pathToDirectory + @$"{typeKey}\FilesDictionary.txt");
                         inputOnlineFile = new InputOnlineFile(dictionaryFiles.GetValueOrDefault(update.CallbackQuery.Data));
                         await iBotClient.SendDocumentAsync(chatId, inputOnlineFile);
                         await iBotClient.SendTextMessageAsync(
@@ -505,7 +505,7 @@ namespace TelegramBotWpfSB2
                             cancellationToken: cancellationToken);
                         break;
                     case "VideoNote":
-                        dictionaryFiles = LoadDictionary(@$"C:\Users\delicia\Desktop\DownloadTelegramBot\{typeKey}\FilesDictionary.txt");
+                        dictionaryFiles = LoadDictionary(pathToDirectory + @$"{typeKey}\FilesDictionary.txt");
                         inputOnlineFile = new InputOnlineFile(dictionaryFiles.GetValueOrDefault(update.CallbackQuery.Data));
                         await iBotClient.SendVideoAsync(chatId, inputOnlineFile);
                         await iBotClient.SendTextMessageAsync(
@@ -514,7 +514,7 @@ namespace TelegramBotWpfSB2
                             cancellationToken: cancellationToken);
                         break;
                     case "Voice":
-                        dictionaryFiles = LoadDictionary(@$"C:\Users\delicia\Desktop\DownloadTelegramBot\{typeKey}\FilesDictionary.txt");
+                        dictionaryFiles = LoadDictionary(pathToDirectory + @$"{typeKey}\FilesDictionary.txt");
                         inputOnlineFile = new InputOnlineFile(dictionaryFiles.GetValueOrDefault(update.CallbackQuery.Data));
                         await iBotClient.SendAudioAsync(chatId, inputOnlineFile);
                         await iBotClient.SendTextMessageAsync(
