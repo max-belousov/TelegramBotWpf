@@ -18,4 +18,8 @@
  - Material Design
    
   You can run this project locally just do:
-  - 
+  - Create the folder on your local machine and .txt files like on the screen. Files should be empty  
+   ![DownloadTelegramBot--KOPIY.jpg](https://s8.gifyu.com/images/DownloadTelegramBot--KOPIY.jpg)  
+    and example of folder Photo  
+    ![Photo.jpg](https://s8.gifyu.com/images/Photo.jpg)  
+  - in TelegramClient.cs
