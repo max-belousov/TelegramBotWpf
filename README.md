@@ -22,4 +22,5 @@
    ![DownloadTelegramBot--KOPIY.jpg](https://s8.gifyu.com/images/DownloadTelegramBot--KOPIY.jpg)  
     and example of folder Photo  
     ![Photo.jpg](https://s8.gifyu.com/images/Photo.jpg)  
-  - in TelegramClient.cs
+  - in TelegramClient.cs write actual path to folder in pathToDirectory line 33 and path to token in pathToken line 35
+  - run the .exe
